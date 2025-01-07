@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const fetch = require("node-fetch");
 require('dotenv').config();
 
 const logger = morgan("tiny");
@@ -24,6 +25,8 @@ const generatePrompt = function(question){
 
 async function callOpenAI(userMessage) {
   const apiKey = process.env.OPENAI_API_KEY; // Ensure this environment variable is set
+
+  console.log('do we have fetch? ', fetch);
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
