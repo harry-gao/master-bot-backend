@@ -17,30 +17,40 @@ app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 更新计数
-app.post("/api/count", async (req, res) => {
-  const { action } = req.body;
-  if (action === "inc") {
-    await Counter.create();
-  } else if (action === "clear") {
-    await Counter.destroy({
-      truncate: true,
-    });
-  }
+app.post("/ask", async (req, res) => {
+  const { question } = req.body;
+  const answer = "阿弥陀佛, 又称为无量清净佛、观自在王佛、得自性清净法性佛，在华人地区习惯作弥陀佛、弥陀等";
   res.send({
     code: 0,
-    data: await Counter.count(),
+    data: answer,
   });
-});
+}
+);
+
+// 更新计数
+// app.post("/api/count", async (req, res) => {
+//   const { action } = req.body;
+//   if (action === "inc") {
+//     await Counter.create();
+//   } else if (action === "clear") {
+//     await Counter.destroy({
+//       truncate: true,
+//     });
+//   }
+//   res.send({
+//     code: 0,
+//     data: await Counter.count(),
+//   });
+// });
 
 // 获取计数
-app.get("/api/count", async (req, res) => {
-  const result = await Counter.count();
-  res.send({
-    code: 0,
-    data: result,
-  });
-});
+// app.get("/api/count", async (req, res) => {
+//   const result = await Counter.count();
+//   res.send({
+//     code: 0,
+//     data: result,
+//   });
+// });
 
 // 小程序调用，获取微信 Open ID
 app.get("/api/wx_openid", async (req, res) => {
@@ -52,7 +62,7 @@ app.get("/api/wx_openid", async (req, res) => {
 const port = process.env.PORT || 80;
 
 async function bootstrap() {
-  await initDB();
+  //await initDB();
   app.listen(port, () => {
     console.log("启动成功", port);
   });
