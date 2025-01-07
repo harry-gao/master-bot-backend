@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const fetch = require("node-fetch");
+const axios = require('axios');
 require('dotenv').config();
 
 const logger = morgan("tiny");
@@ -26,25 +26,23 @@ const generatePrompt = function(question){
 async function callOpenAI(userMessage) {
   const apiKey = process.env.OPENAI_API_KEY; // Ensure this environment variable is set
 
-  console.log('do we have fetch? ', fetch);
+  try {
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: 'gpt-4o-mini', // Specify the chat model
+        messages: [{ role: 'user', content: userMessage }], // Chat messages structure
+        max_tokens: 500, // Adjust as necessary
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+      });
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini', // Specify the chat model
-      messages: [{ role: 'user', content: userMessage }], // Chat messages structure
-      max_tokens: 500, // Adjust as necessary
-    }),
-  });
-
-
-  const data = await response.json();
-  console.log(`open ai repsonse: ${JSON.stringify(data)}`);
-  return data.choices[0].message.content;
+      return response.data.choices[0].message.content;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+  }
 }
 
 
@@ -86,5 +84,6 @@ async function bootstrap() {
     console.log("running on port", port);
   });
 }
+
 
 bootstrap();
